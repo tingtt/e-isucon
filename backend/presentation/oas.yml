@@ -1,0 +1,870 @@
+openapi: 3.0.0
+info:
+  description: ""
+  version: "1.0.0"
+  title: プロ研Hub Web API
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+tags: []
+
+servers:
+  - url: "http://localhost:1323"
+
+security:
+  - Bearer: []
+
+paths:
+  /users:
+    get:
+      summary: ユーザー一覧
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        500:
+          description: Internal server error
+    post:
+      summary: ユーザー登録
+      security: []
+      requestBody:
+        $ref: "#/components/requestBodies/CreateUserBody"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserWithToken"
+        400:
+          description: Invalid request
+        422:
+          description: Unprocessable entity
+        500:
+          description: Internal server error
+    delete:
+      summary: ユーザー削除
+      description: "`user.name: admin`は削除不可"
+      responses:
+        204:
+          description: Deleted
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+        405:
+          description: Method not allowed
+        500:
+          description: Internal server error
+
+  /users/sign_in:
+    post:
+      summary: サインイン
+      security: []
+      requestBody:
+        $ref: "#/components/requestBodies/LoginBody"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        400:
+          description: Invalid request
+        401:
+          description: Unauthorized
+        405:
+          description: Method not allowed
+        422:
+          description: Unprocessable entity
+        500:
+          description: Internal server error
+
+  /users/{id}:
+    get:
+      summary: ユーザー詳細
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Not found
+        500:
+          description: Internal server error
+    patch:
+      summary: ユーザー情報変更
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateUserBody"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserWithToken"
+        400:
+          description: Invalid request
+        401:
+          description: Unauthorized
+        404:
+          description: Not found
+        422:
+          description: Unprocessable entity
+        500:
+          description: Internal server error
+    delete:
+      summary: ユーザー削除
+      description: "`user.name: admin`は削除不可"
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        204:
+          description: Deleted
+        401:
+          description: Unauthorized
+        404:
+          description: Not found
+        405:
+          description: Method not allowed
+        500:
+          description: Internal server error
+
+  /users/{id}/star:
+    post:
+      summary: ユーザーにスターを付ける
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    format: uint64
+        404:
+          description: Not found
+        500:
+          description: Internal server error
+
+  /events:
+    get:
+      summary: イベント一覧
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/name"
+        - $ref: "#/components/parameters/name_contain"
+        - $ref: "#/components/parameters/location"
+        - $ref: "#/components/parameters/location_contain"
+        - $ref: "#/components/parameters/embed"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Event"
+                example:
+                  - id: 1
+                    name: ITシステムの構造
+                    user:
+                      id: 1
+                      name: "prc_hub_user"
+                      email: "user@prchub.com"
+                      github_username: ecc-proken
+                      twitter_id: ecc_prc
+                      post_event_availabled: true
+                      manage: false
+                      admin: false
+                    description: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！
+                    location: "2302"
+                    datetimes:
+                      - start: 2022-05-16T17:15:00+0900
+                        end: 2022-05-16T18:00:00+0900
+                      - start: 2022-05-17T17:15:00+0900
+                        end: 2022-05-17T18:00:00+0900
+                      - start: 2022-05-20T18:45:00+0900
+                        end: 2022-05-20T19:30:00+0900
+                    published: true
+                    completed: true
+                    documents:
+                      - id: 1
+                        name: スライド
+                        url: https://github.com/ecc-proken/StudyGroup/blob/main/20220516-it_system/slide.pdf
+                  - id: 2
+                    name: Git/GitHubハンズオン
+                    user:
+                      id: 1
+                      name: "prc_hub_user"
+                      email: "user@prchub.com"
+                      github_username: ecc-proken
+                      twitter_id: ecc_prc
+                      post_event_availabled: true
+                      manage: false
+                      admin: false
+                    description: エンジニア必須スキルのGitとGitHubのハンズオンを行います。\nGit/GitHubはITシステムを開発する上でよく利用する技術・サービスです。
+                    location: "2302"
+                    datetimes:
+                      - start: 2022-05-23T17:15:00+0900
+                        end: 2022-05-23T18:00:00+0900
+                      - start: 2022-05-24T17:15:00+0900
+                        end: 2022-05-24T18:00:00+0900
+                      - start: 2022-05-27T18:45:00+0900
+                        end: 2022-05-27T19:30:00+0900
+                    published: true
+                    completed: true
+                    documents:
+                      - id: 1
+                        name: スライド
+                        url: https://github.com/ecc-proken/StudyGroup/blob/main/20220523-git_hands_on/slide.pdf
+                      - id: 2
+                        name: ハンズオン資料
+                        url: https://github.com/ecc-proken/StudyGroup/blob/main/20220523-git_hands_on/DOCUMENT.md
+                  - id: 3
+                    name: Webサーバハンズオン
+                    user:
+                      id: 1
+                      name: "prc_hub_user"
+                      email: "user@prchub.com"
+                      github_username: ecc-proken
+                      twitter_id: ecc_prc
+                      post_event_availabled: true
+                      manage: false
+                      admin: false
+                    description: 4年生が実際に開発しているWebサイトを題材にハンズオンを行います。\n題材ははNext.js(React.js/node.js)というWebサイトなどを作るJavaScriptのフレームワークを利用しています。
+                    location: "2302"
+                    datetimes:
+                      - start: 2022-06-17T18:45:00+0900
+                        end: 2022-06-17T19:30:00+0900
+                      - start: 2022-06-20T17:15:00+0900
+                        end: 2022-06-20T18:00:00+0900
+                      - start: 2022-06-21T17:15:00+0900
+                        end: 2022-06-21T18:00:00+0900
+                    published: true
+                    completed: false
+        500:
+          description: Internal server error
+    post:
+      summary: イベント登録
+      requestBody:
+        $ref: "#/components/requestBodies/CreateEventBody"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        400:
+          description: Invalid request
+        422:
+          description: Unprocessable entity
+        500:
+          description: Internal server error
+
+  /events/{id}:
+    get:
+      summary: イベント詳細
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/embed"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        401:
+          description: Unauthorized
+        404:
+          description: Not found
+    patch:
+      summary: イベント情報変更
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateEventBody"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        400:
+          description: Invalid request
+        401:
+          description: Unauthorized
+        404:
+          description: Not found
+        422:
+          description: Unprocessable entity
+        500:
+          description: Internal server error
+    delete:
+      summary: イベント削除
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        204:
+          description: Deleted
+        401:
+          description: Unauthorized
+        404:
+          description: Not found
+        500:
+          description: Internal server error
+
+  /events/{id}/documents:
+    get:
+      summary: イベント資料一覧
+      parameters:
+        - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/name"
+        - $ref: "#/components/parameters/name_contain"
+      security: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EventDocument"
+        404:
+          description: Not found
+        500:
+          description: Internal server error
+    post:
+      summary: イベント資料登録
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        $ref: "#/components/requestBodies/CreateEventDocumentBody"
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EventDocument"
+        400:
+          description: Invalid request
+        404:
+          description: Not found
+        422:
+          description: Unprocessable entity
+        500:
+          description: Internal server error
+
+  /events/{id}/documents/{document_id}:
+    get:
+      summary: イベント資料
+      parameters:
+        - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/document_id"
+      security: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EventDocument"
+        404:
+          description: Not found
+        500:
+          description: Internal server error
+    patch:
+      summary: イベント資料変更
+      parameters:
+        - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/document_id"
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateEventDocumentBody"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventDocument"
+        400:
+          description: Invalid request
+        401:
+          description: Unauthorized
+        404:
+          description: Not found
+        422:
+          description: Unprocessable entity
+        500:
+          description: Internal server error
+    delete:
+      summary: イベント資料削除
+      parameters:
+        - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/document_id"
+      responses:
+        204:
+          description: Deleted
+        401:
+          description: Unauthorized
+        404:
+          description: Not found
+        500:
+          description: Internal server error
+
+  /reset:
+    post:
+      summary: migration
+      responses:
+        200:
+          description: Success
+        500:
+          description: Internal server error
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: prc_hub_user
+        email:
+          type: string
+          format: email
+          example: user@prchub.com
+        github_username:
+          type: string
+          example: ecc-proken
+        twitter_id:
+          type: string
+          example: ecc_prc
+        star_count:
+          type: integer
+          format: uint64
+        post_event_availabled:
+          type: boolean
+          example: true
+        manage:
+          type: boolean
+          example: false
+        admin:
+          type: boolean
+          example: false
+      required:
+        - id
+        - name
+        - email
+        - post_event_availabled
+        - manage
+        - admin
+
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@prchub.com
+        password:
+          type: string
+          format: password
+          example: prc_hub
+      required:
+        - email
+        - password
+
+    UserWithToken:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: prc_hub_user
+        email:
+          type: string
+          format: email
+          example: user@prchub.com
+        github_username:
+          type: string
+          example: ecc-proken
+        twitter_id:
+          type: string
+          example: ecc_prc
+        post_event_availabled:
+          type: boolean
+          example: true
+        admin:
+          type: boolean
+          example: false
+        token:
+          type: string
+          example: HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH.PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP.DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+      required:
+        - id
+        - name
+        - email
+        - post_event_availabled
+        - admin
+        - token
+
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+          example: HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH.PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP.DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+      required:
+        - token
+
+    CreateUserBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: prc_hub_user
+        email:
+          type: string
+          format: email
+          example: user@prchub.com
+        password:
+          type: string
+          format: password
+          example: prc_hub
+        github_username:
+          type: string
+          example: ecc-proken
+        twitter_id:
+          type: string
+          example: ecc_prc
+      required:
+        - name
+        - email
+        - password
+
+    UpdateUserBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: prc_hub_user
+        email:
+          type: string
+          example: user@prchub.com
+        password:
+          type: string
+          format: password
+          example: prc_hub
+        github_username:
+          type: string
+          example: ecc-proken
+        twitter_id:
+          type: string
+          example: ecc_prc
+        post_event_availabled:
+          type: boolean
+          example: true
+        manage:
+          type: boolean
+          example: false
+
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: ITシステムの構造
+        user:
+          $ref: "#/components/schemas/User"
+        description:
+          type: string
+          example: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！
+        location:
+          type: string
+          example: "2302"
+        datetimes:
+          type: array
+          items:
+            $ref: "#/components/schemas/EventDatetime"
+          minItems: 1
+          example:
+            - start: 2022-05-16T17:15:00+0900
+              end: 2022-05-16T18:00:00+0900
+            - start: 2022-05-17T17:15:00+0900
+              end: 2022-05-17T18:00:00+0900
+            - start: 2022-05-20T18:45:00+0900
+              end: 2022-05-20T19:30:00+0900
+        published:
+          type: boolean
+          example: true
+        completed:
+          type: boolean
+          example: false
+        documents:
+          type: array
+          items:
+            $ref: "#/components/schemas/EventDocument"
+      required:
+        - id
+        - name
+        - datetimes
+        - published
+        - completed
+
+    EventDatetime:
+      type: object
+      properties:
+        start:
+          type: string
+          example: 2022-05-16T17:15:00+0900
+        end:
+          type: string
+          example: 2022-05-16T18:00:00+0900
+      required:
+        - start
+        - end
+
+    CreateEventBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: ITシステムの構造
+        description:
+          type: string
+          example: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！
+        location:
+          type: string
+          example: "2302"
+        datetimes:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateEventDatetime"
+          example:
+            - start: 2022-05-16T17:15:00+0900
+              end: 2022-05-16T18:00:00+0900
+            - start: 2022-05-17T17:15:00+0900
+              end: 2022-05-17T18:00:00+0900
+            - start: 2022-05-20T18:45:00+0900
+              end: 2022-05-20T19:30:00+0900
+        published:
+          type: boolean
+          default: true
+          example: true
+        completed:
+          type: boolean
+          default: false
+          example: false
+      required:
+        - name
+
+    CreateEventDatetime:
+      type: object
+      properties:
+        start:
+          type: string
+          example: 2022-05-16T17:15:00+0900
+        end:
+          type: string
+          example: 2022-05-16T18:00:00+0900
+      required:
+        - start
+        - end
+
+    UpdateEventBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: ITシステムの構造
+        description:
+          type: string
+          example: Webサイトやモバイルアプリなどのサービスがどのようにして成り立っているのか全体像を勉強します！\n図を使って基礎的なことを説明します！
+        location:
+          type: string
+          example: "2302"
+        datetimes:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateEventDatetime"
+          example:
+            - start: 2022-05-16T17:15:00+0900
+              end: 2022-05-16T18:00:00+0900
+            - start: 2022-05-17T17:15:00+0900
+              end: 2022-05-17T18:00:00+0900
+            - start: 2022-05-20T18:45:00+0900
+              end: 2022-05-20T19:30:00+0900
+        published:
+          type: boolean
+          example: true
+        completed:
+          type: boolean
+          example: true
+
+    EventDocument:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: スライド
+        url:
+          type: string
+          format: uri
+          example: https://github.com/ecc-proken/StudyGroup/blob/main/20220516-it_system/slide.pdf
+      required:
+        - id
+        - name
+        - url
+
+    CreateEventDocumentBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: スライド
+        url:
+          type: string
+          format: uri
+          example: https://github.com/ecc-proken/StudyGroup/blob/main/20220516-it_system/slide.pdf
+      required:
+        - name
+        - url
+
+    UpdateEventDocumentBody:
+      type: object
+      properties:
+        name:
+          type: string
+          example: スライド
+        url:
+          type: string
+          format: uri
+          example: https://github.com/ecc-proken/StudyGroup/blob/main/20220516-it_system/slide.pdf
+
+  requestBodies:
+    LoginBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LoginBody"
+    CreateUserBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateUserBody"
+    UpdateUserBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateUserBody"
+    CreateEventBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateEventBody"
+    UpdateEventBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateEventBody"
+    CreateEventDocumentBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateEventDocumentBody"
+    UpdateEventDocumentBody:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateEventDocumentBody"
+
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    document_id:
+      name: document_id
+      in: path
+      required: true
+      schema:
+        type: string
+        example: 1
+    name:
+      name: name
+      in: query
+      schema:
+        type: string
+    name_contain:
+      name: name_contain
+      in: query
+      schema:
+        type: string
+    location:
+      name: location
+      in: query
+      schema:
+        type: string
+    location_contain:
+      name: location_contain
+      in: query
+      schema:
+        type: string
+    embed:
+      name: embed
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+            - user
+            - documents
+
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      description: Credentials or access token for API
