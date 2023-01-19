@@ -2,6 +2,7 @@ package echo
 
 import (
 	"fmt"
+	"os"
 	"prc_hub_back/domain/model/jwt"
 	"prc_hub_back/domain/model/logger"
 
@@ -12,6 +13,14 @@ import (
 func Start(port uint, jwtIssuer string, jwtSecret string, allowOrigins []string) {
 	// echoサーバーのインスタンス生成
 	e := echo.New()
+
+	// LSTV形式のロギング
+	e.HideBanner = true
+	e.HidePort = true
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "time:${time_rfc3339}\thost:${remote_ip}\tstatus:${status}\tmethod:${method}\turi:${uri}\tsize:${bytes_out}\tua:${user_agent}\tapptime:${latency}\tvhost:${host}\treqtime_human:${latency_human}\thost:${host}\n",
+		Output: os.Stdout,
+	}))
 
 	// CORS
 	if allowOrigins != nil {
