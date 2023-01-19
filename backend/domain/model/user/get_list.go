@@ -22,39 +22,49 @@ func GetList(q GetUserListQueryParam) ([]User, error) {
 	defer db.Close()
 
 	// クエリを作成
-	query := "SELECT * FROM users WHERE"
+	query :=
+		`SELECT
+			u.id, u.name, u.email, u.password,
+			u.post_event_availabled, u.manage, u.admin,
+			u.twitter_id, u.github_username,
+			COUNT(s.target_user_id) AS star_count
+		FROM
+			users u
+		LEFT JOIN
+			user_stars s ON u.id = s.target_user_id
+		WHERE`
 	queryParams := []interface{}{}
 	if q.PostEventAvailabled != nil {
 		// 権限で絞り込み
-		query += " post_event_availabled = ? AND"
+		query += " u.post_event_availabled = ? AND"
 		queryParams = append(queryParams, *q.PostEventAvailabled)
 	}
 	if q.Manage != nil {
 		// 権限で絞り込み
-		query += " manage = ? AND"
+		query += " u.manage = ? AND"
 		queryParams = append(queryParams, *q.Manage)
 	}
 	if q.Admin != nil {
 		// 権限で絞り込み
-		query += " admin = ? AND"
+		query += " u.admin = ? AND"
 		queryParams = append(queryParams, *q.Admin)
 	}
 	if q.Name != nil {
 		// ドキュメント名の一致で絞り込み
-		query += " name = ? AND"
+		query += " u.name = ? AND"
 		queryParams = append(queryParams, *q.Name)
 	}
 	if q.NameContain != nil {
 		// ドキュメント名に文字列が含まれるかで絞り込み
-		query += " name LIKE ?"
+		query += " u.name LIKE ?"
 		queryParams = append(queryParams, "%"+*q.NameContain+"%")
 	}
 	// 不要な末尾の句を切り取り
-	query = strings.TrimSuffix(query, " WHERE")
+	query = strings.TrimSuffix(query, "	WHERE")
 	query = strings.TrimSuffix(query, " AND")
 
 	// `users`テーブルからを取得
-	r, err := db.Query(query, queryParams...)
+	r, err := db.Query(query+" GROUP BY u.id", queryParams...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,57 +74,18 @@ func GetList(q GetUserListQueryParam) ([]User, error) {
 	// 配列`users`に代入する
 	var users []User
 	for r.Next() {
-		// 一時変数に割り当て
-		var (
-			id                  int64
-			name                string
-			email               string
-			password            string
-			postEventAvailabled bool
-			manage              bool
-			admin               bool
-			twitterId           *string
-			githubUsername      *string
-		)
+		// 変数に割り当て
+		u := User{}
 		err = r.Scan(
-			&id, &name, &email, &password, &postEventAvailabled,
-			&manage, &admin, &twitterId, &githubUsername,
+			&u.Id, &u.Name, &u.Email, &u.Password, &u.PostEventAvailabled,
+			&u.Manage, &u.Admin, &u.TwitterId, &u.GithubUsername, &u.StarCount,
 		)
 		if err != nil {
 			return nil, err
 		}
-
-		// スター数を取得
-		var count uint64 = 0
-		r2, err := db.Query("SELECT COUNT(*) FROM user_stars WHERE target_user_id = ?", id)
-		if err != nil {
-			return nil, err
-		}
-		if !r2.Next() {
-			return nil, ErrConflictUserStars
-		}
-		err = r2.Scan(&count)
-		if err != nil {
-			return nil, err
-		}
-		r2.Close()
 
 		// 配列に追加
-		users = append(
-			users,
-			User{
-				Id:                  id,
-				Name:                name,
-				Email:               email,
-				Password:            password,
-				StarCount:           count,
-				PostEventAvailabled: postEventAvailabled,
-				Manage:              manage,
-				Admin:               admin,
-				TwitterId:           twitterId,
-				GithubUsername:      githubUsername,
-			},
-		)
+		users = append(users, u)
 	}
 
 	return users, nil
