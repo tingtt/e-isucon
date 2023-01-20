@@ -27,15 +27,7 @@ CREATE TABLE `users` (
   `admin` tinyint(1) NOT NULL DEFAULT 0,
   `twitter_id` varchar(255),
   `github_username` varchar(255),
-  PRIMARY KEY (`id`)
-);
-
---
--- Table structure for table `user_stars`
---
-CREATE TABLE `user_stars` (
-  `id` int(255) UNSIGNED AUTO_INCREMENT NOT NULL,
-  `target_user_id` int(255) UNSIGNED NOT NULL,
+  `star_count` int(255) UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 );
 

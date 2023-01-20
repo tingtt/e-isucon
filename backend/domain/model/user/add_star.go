@@ -15,13 +15,13 @@ func AddStar(userId uint64) (count uint64, err error) {
 	defer db.Close()
 
 	// `user_stars`テーブルに追加
-	_, err = db.Exec("INSERT INTO user_stars (target_user_id) VALUES (?)", userId)
+	_, err = db.Exec("UPDATE users SET star_count = star_count + 1 WHERE id = ?", userId)
 	if err != nil {
 		return 0, err
 	}
 
 	// スター数のカウントを取得
-	r, err := db.Query("SELECT COUNT(*) FROM user_stars WHERE target_user_id = ?", userId)
+	r, err := db.Query("SELECT star_count FROM users WHERE id = ?", userId)
 	if err != nil {
 		return 0, err
 	}

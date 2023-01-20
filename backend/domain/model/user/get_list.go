@@ -24,39 +24,35 @@ func GetList(q GetUserListQueryParam) ([]User, error) {
 	// クエリを作成
 	query :=
 		`SELECT
-			u.id, u.name, u.email, u.password,
-			u.post_event_availabled, u.manage, u.admin,
-			u.twitter_id, u.github_username,
-			COUNT(s.target_user_id) AS star_count
-		FROM
-			users u
-		LEFT JOIN
-			user_stars s ON u.id = s.target_user_id
+			id, name, email, password,
+			post_event_availabled, manage, admin,
+			twitter_id, github_username, star_count
+		FROM users u
 		WHERE`
 	queryParams := []interface{}{}
 	if q.PostEventAvailabled != nil {
 		// 権限で絞り込み
-		query += " u.post_event_availabled = ? AND"
+		query += " post_event_availabled = ? AND"
 		queryParams = append(queryParams, *q.PostEventAvailabled)
 	}
 	if q.Manage != nil {
 		// 権限で絞り込み
-		query += " u.manage = ? AND"
+		query += " manage = ? AND"
 		queryParams = append(queryParams, *q.Manage)
 	}
 	if q.Admin != nil {
 		// 権限で絞り込み
-		query += " u.admin = ? AND"
+		query += " admin = ? AND"
 		queryParams = append(queryParams, *q.Admin)
 	}
 	if q.Name != nil {
 		// ドキュメント名の一致で絞り込み
-		query += " u.name = ? AND"
+		query += " name = ? AND"
 		queryParams = append(queryParams, *q.Name)
 	}
 	if q.NameContain != nil {
 		// ドキュメント名に文字列が含まれるかで絞り込み
-		query += " u.name LIKE ?"
+		query += " name LIKE ?"
 		queryParams = append(queryParams, "%"+*q.NameContain+"%")
 	}
 	// 不要な末尾の句を切り取り
@@ -64,7 +60,7 @@ func GetList(q GetUserListQueryParam) ([]User, error) {
 	query = strings.TrimSuffix(query, " AND")
 
 	// `users`テーブルからを取得
-	r, err := db.Query(query+" GROUP BY u.id", queryParams...)
+	r, err := db.Query(query, queryParams...)
 	if err != nil {
 		return nil, err
 	}
