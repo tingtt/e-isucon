@@ -7,7 +7,7 @@ var (
 	ErrAdminUserCannnotDelete = errors.New("cannot delete admin user")
 )
 
-func DeleteUesr(id int64, requestUser User) error {
+func DeleteUesr(id string, requestUser User) error {
 	// リポジトリから削除対象の`User`を取得
 	u, err := Get(id)
 	if err != nil {

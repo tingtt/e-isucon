@@ -18,7 +18,7 @@ func (*Server) PostUsersIdStar(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
 	}
 
-	count, err := user.AddStar(uint64(id))
+	count, err := user.AddStar(id)
 	if err != nil {
 		return JSONMessage(ctx, http.StatusInternalServerError, err.Error())
 	}

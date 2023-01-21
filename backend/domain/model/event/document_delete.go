@@ -10,7 +10,7 @@ var (
 	ErrCannotDeleteEventDocument = errors.New("sorry, you cannot delete this document")
 )
 
-func DeleteEventDocument(id int64, requestUser user.User) error {
+func DeleteEventDocument(id string, requestUser user.User) error {
 	// Get document
 	ed, err := GetDocument(id, requestUser)
 	if err != nil {

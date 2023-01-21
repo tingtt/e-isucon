@@ -3,6 +3,7 @@ package user
 import (
 	"prc_hub_back/domain/model/jwt"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -61,14 +62,11 @@ func CreateUser(p CreateUserParam) (UserWithToken, error) {
 	defer d.Close()
 
 	// `users`テーブルに追加
-	r, err := d.Exec(
-		`INSERT INTO users (name, email, password, post_event_availabled, manage, admin, twitter_id, github_username) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-		p.Name, p.Email, string(hashed), false, false, false, p.TwitterId, p.GithubUsername,
+	id := uuid.New().String()
+	_, err = d.Exec(
+		`INSERT INTO users (id, name, email, password, post_event_availabled, manage, admin, twitter_id, github_username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		id, p.Name, p.Email, string(hashed), false, false, false, p.TwitterId, p.GithubUsername,
 	)
-	if err != nil {
-		return UserWithToken{}, err
-	}
-	id, err := r.LastInsertId()
 	if err != nil {
 		return UserWithToken{}, err
 	}

@@ -6,6 +6,8 @@ import (
 	"errors"
 	"prc_hub_back/domain/model/user"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // Errors
@@ -106,14 +108,11 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 	}()
 
 	// `events`テーブルに追加
-	r, err := tx.Exec(
-		`INSERT INTO events (name, description, location, published, completed, user_id) VALUES (?, ?, ?, ?, ?, ?)`,
-		p.Name, p.Description, p.Location, p.Published, p.Completed, requestUser.Id,
+	id := uuid.New().String()
+	_, err = tx.Exec(
+		`INSERT INTO events (id, name, description, location, published, completed, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		id, p.Name, p.Description, p.Location, p.Published, p.Completed, requestUser.Id,
 	)
-	if err != nil {
-		return Event{}, err
-	}
-	id, err := r.LastInsertId()
 	if err != nil {
 		return Event{}, err
 	}

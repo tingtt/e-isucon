@@ -3,6 +3,8 @@ package event
 import (
 	"errors"
 	"prc_hub_back/domain/model/user"
+
+	"github.com/google/uuid"
 )
 
 // Errors
@@ -11,7 +13,7 @@ var (
 )
 
 type CreateEventDocumentParam struct {
-	EventId int64  `json:"event_id"`
+	EventId string `json:"event_id"`
 	Name    string `json:"name"`
 	Url     string `json:"url"`
 }
@@ -63,14 +65,11 @@ func CreateEventDocument(p CreateEventDocumentParam, requestUser user.User) (Eve
 	defer db.Close()
 
 	// `documents`テーブルに追加
-	r, err := db.Exec(
-		`INSERT INTO documents (event_id, name, url) VALUES (?, ?, ?)`,
-		p.EventId, p.Name, p.Url,
+	id := uuid.New().String()
+	_, err = db.Exec(
+		`INSERT INTO documents (id, event_id, name, url) VALUES (?, ?, ?, ?)`,
+		id, p.EventId, p.Name, p.Url,
 	)
-	if err != nil {
-		return EventDocument{}, err
-	}
-	id, err := r.LastInsertId()
 	if err != nil {
 		return EventDocument{}, err
 	}

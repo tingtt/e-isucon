@@ -9,7 +9,7 @@ type GetEventQueryParam struct {
 	Embed *[]string `query:"embed"`
 }
 
-func GetEvent(id int64, q GetEventQueryParam, requestUser user.User) (EventEmbed, error) {
+func GetEvent(id string, q GetEventQueryParam, requestUser user.User) (EventEmbed, error) {
 	// Get event
 	// MySQLサーバーに接続
 	d, err := OpenMysql()
@@ -104,16 +104,16 @@ func GetEvent(id int64, q GetEventQueryParam, requestUser user.User) (EventEmbed
 			eLocation    *string
 			ePublished   *bool
 			eCompleted   *bool
-			eUserId      *int64
+			eUserId      *string
 
 			eDtStart *time.Time
 			eDtEnd   *time.Time
 
-			eDocId   *int64
+			eDocId   *string
 			eDocName *string
 			eDocUrl  *string
 
-			uId                  *int64
+			uId                  *string
 			uName                *string
 			uEmail               *string
 			uPostEventAvailabled *bool

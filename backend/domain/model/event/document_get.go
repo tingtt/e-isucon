@@ -2,7 +2,7 @@ package event
 
 import "prc_hub_back/domain/model/user"
 
-func GetDocument(id int64, requestUser user.User) (EventDocument, error) {
+func GetDocument(id string, requestUser user.User) (EventDocument, error) {
 	// Get document
 
 	// MySQLサーバーに接続

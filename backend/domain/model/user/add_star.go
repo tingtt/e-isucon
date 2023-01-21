@@ -1,7 +1,7 @@
 package user
 
-func AddStar(userId uint64) (count uint64, err error) {
-	_, err = Get(int64(userId))
+func AddStar(UserId string) (count uint64, err error) {
+	_, err = Get(UserId)
 	if err != nil {
 		return 0, err
 	}
@@ -15,13 +15,13 @@ func AddStar(userId uint64) (count uint64, err error) {
 	defer db.Close()
 
 	// `user_stars`テーブルに追加
-	_, err = db.Exec("UPDATE users SET star_count = star_count + 1 WHERE id = ?", userId)
+	_, err = db.Exec("UPDATE users SET star_count = star_count + 1 WHERE id = ?", UserId)
 	if err != nil {
 		return 0, err
 	}
 
 	// スター数のカウントを取得
-	r, err := db.Query("SELECT star_count FROM users WHERE id = ?", userId)
+	r, err := db.Query("SELECT star_count FROM users WHERE id = ?", UserId)
 	if err != nil {
 		return 0, err
 	}

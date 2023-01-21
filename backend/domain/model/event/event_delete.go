@@ -10,7 +10,7 @@ var (
 	ErrCannotDeleteEvent = errors.New("sorry, you cannot delete this event")
 )
 
-func DeleteEvent(id int64, requestUser user.User) error {
+func DeleteEvent(id string, requestUser user.User) error {
 	// Get event
 	e, err := GetEvent(
 		id,

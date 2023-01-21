@@ -25,7 +25,7 @@ type UpdateUserParam struct {
 	GithubUsername      util.NullableJSONString `json:"github_username,omitempty"`
 }
 
-func (p UpdateUserParam) validate(id int64, requestUser User) error {
+func (p UpdateUserParam) validate(id string, requestUser User) error {
 	// フィールドの検証
 	if p.Name != nil {
 		err := validateName(*p.Name)
@@ -69,7 +69,7 @@ func (p UpdateUserParam) validate(id int64, requestUser User) error {
 	return nil
 }
 
-func Update(id int64, p UpdateUserParam, requestUser User) (UserWithToken, error) {
+func Update(id string, p UpdateUserParam, requestUser User) (UserWithToken, error) {
 	// 権限の検証
 	if requestUser.Id != id && !requestUser.Admin {
 		// Admin権限なし 且つ IDが自分ではない場合は削除不可

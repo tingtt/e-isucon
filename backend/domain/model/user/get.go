@@ -1,6 +1,6 @@
 package user
 
-func Get(id int64) (User, error) {
+func Get(id string) (User, error) {
 	// MySQLサーバーに接続
 	db, err := OpenMysql()
 	if err != nil {

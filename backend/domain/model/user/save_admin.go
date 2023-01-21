@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -55,9 +56,10 @@ func SaveAdmin(email string, password string) error {
 		defer d.Close()
 
 		// `users`テーブルに追加
+		id := uuid.New().String()
 		_, err = d.Exec(
-			`INSERT INTO users (name, email, password, post_event_availabled, manage, admin, twitter_id, github_username) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-			"admin", email, string(hashed), true, true, true, nil, nil,
+			`INSERT INTO users (id, name, email, password, post_event_availabled, manage, admin, twitter_id, github_username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, "admin", email, string(hashed), true, true, true, nil, nil,
 		)
 		if err != nil {
 			return err

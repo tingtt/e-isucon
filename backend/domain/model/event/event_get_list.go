@@ -143,22 +143,22 @@ func GetEventList(q GetEventListQueryParam, requestUser user.User) ([]EventEmbed
 	for r.Next() {
 		// カラム読み込み用変数
 		var (
-			eId          int64
+			eId          string
 			eName        *string
 			eDescription *string
 			eLocation    *string
 			ePublished   *bool
 			eCompleted   *bool
-			eUserId      *int64
+			eUserId      *string
 
 			eDtStart *time.Time
 			eDtEnd   *time.Time
 
-			eDocId   *int64
+			eDocId   *string
 			eDocName *string
 			eDocUrl  *string
 
-			uId                  *int64
+			uId                  *string
 			uName                *string
 			uEmail               *string
 			uPostEventAvailabled *bool

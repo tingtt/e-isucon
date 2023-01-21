@@ -16,7 +16,7 @@ type UpdateEventDocumentParam struct {
 	Url  *string `json:"url"`
 }
 
-func (p UpdateEventDocumentParam) validate(id int64, requestUser user.User) error {
+func (p UpdateEventDocumentParam) validate(id string, requestUser user.User) error {
 	/**
 	 * フィールドの検証
 	**/
@@ -61,7 +61,7 @@ func (p UpdateEventDocumentParam) validate(id int64, requestUser user.User) erro
 	return nil
 }
 
-func UpdateEventDocument(id int64, p UpdateEventDocumentParam, requestUser user.User) (EventDocument, error) {
+func UpdateEventDocument(id string, p UpdateEventDocumentParam, requestUser user.User) (EventDocument, error) {
 	// `documents`テーブルから`id`が一致する行を確認
 	_, err := GetDocument(id, requestUser)
 	if err != nil {

@@ -39,7 +39,7 @@ func validateUrl(url string) error {
 	return nil
 }
 
-func validateEventId(id int64, requestUser user.User) error {
+func validateEventId(id string, requestUser user.User) error {
 	// MySQLサーバーに接続
 	db, err := OpenMysql()
 	if err != nil {

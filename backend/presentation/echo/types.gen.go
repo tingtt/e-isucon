@@ -132,13 +132,13 @@ type UserWithToken struct {
 }
 
 // DocumentId defines model for document_id.
-type DocumentId = int64
+type DocumentId = string
 
 // Embed defines model for embed.
 type Embed = []string
 
 // Id defines model for id.
-type Id = int64
+type Id = string
 
 // Location defines model for location.
 type Location = string

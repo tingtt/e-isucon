@@ -11,7 +11,7 @@ type (
 	GetDocumentQueryParam    event.GetDocumentQueryParam
 )
 
-func CreateDocument(p CreateEventDocumentParam, requestUserId int64) (_ event.EventDocument, err error) {
+func CreateDocument(p CreateEventDocumentParam, requestUserId string) (_ event.EventDocument, err error) {
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {
@@ -28,7 +28,7 @@ func CreateDocument(p CreateEventDocumentParam, requestUserId int64) (_ event.Ev
 	)
 }
 
-func GetDocument(id int64, requestUserId int64) (_ event.EventDocument, err error) {
+func GetDocument(id string, requestUserId string) (_ event.EventDocument, err error) {
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {
@@ -41,7 +41,7 @@ func GetDocument(id int64, requestUserId int64) (_ event.EventDocument, err erro
 	)
 }
 
-func GetDocumentList(q GetDocumentQueryParam, requestUserId int64) ([]event.EventDocument, error) {
+func GetDocumentList(q GetDocumentQueryParam, requestUserId string) ([]event.EventDocument, error) {
 	return event.GetDocumentList(
 		event.GetDocumentQueryParam{
 			EventId:     q.EventId,
@@ -51,7 +51,7 @@ func GetDocumentList(q GetDocumentQueryParam, requestUserId int64) ([]event.Even
 	)
 }
 
-func UpdateDocument(id int64, p UpdateEventDocumentParam, requestUserId int64) (event.EventDocument, error) {
+func UpdateDocument(id string, p UpdateEventDocumentParam, requestUserId string) (event.EventDocument, error) {
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {
@@ -68,7 +68,7 @@ func UpdateDocument(id int64, p UpdateEventDocumentParam, requestUserId int64) (
 	)
 }
 
-func DeleteDocument(id int64, requestUserId int64) error {
+func DeleteDocument(id string, requestUserId string) error {
 	// リクエスト元のユーザーを取得
 	u, err := user.Get(requestUserId)
 	if err != nil {
