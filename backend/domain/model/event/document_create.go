@@ -2,6 +2,7 @@ package event
 
 import (
 	"errors"
+	"prc_hub_back/domain/model/logger"
 	"prc_hub_back/domain/model/user"
 
 	"github.com/google/uuid"
@@ -56,29 +57,34 @@ func CreateEventDocument(p CreateEventDocumentParam, requestUser user.User) (Eve
 		return EventDocument{}, err
 	}
 
-	// MySQLサーバーに接続
-	db, err := OpenMysql()
-	if err != nil {
-		return EventDocument{}, err
-	}
-	// return時にMySQLサーバーとの接続を閉じる
-	defer db.Close()
-
-	// `documents`テーブルに追加
 	id := uuid.New().String()
-	_, err = db.Exec(
-		`INSERT INTO documents (id, event_id, name, url) VALUES (?, ?, ?, ?)`,
-		id, p.EventId, p.Name, p.Url,
-	)
-	if err != nil {
-		return EventDocument{}, err
-	}
 	e := EventDocument{
 		Id:      id,
 		EventId: p.EventId,
 		Name:    p.Name,
 		Url:     p.Url,
 	}
+
+	go func() {
+		// MySQLサーバーに接続
+		db, err := OpenMysql()
+		if err != nil {
+			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+			return
+		}
+		// return時にMySQLサーバーとの接続を閉じる
+		defer db.Close()
+
+		// `documents`テーブルに追加
+		_, err = db.Exec(
+			`INSERT INTO documents (id, event_id, name, url) VALUES (?, ?, ?, ?)`,
+			id, p.EventId, p.Name, p.Url,
+		)
+		if err != nil {
+			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+			return
+		}
+	}()
 
 	return e, nil
 }

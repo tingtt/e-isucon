@@ -2,6 +2,7 @@ package user
 
 import (
 	"prc_hub_back/domain/model/jwt"
+	"prc_hub_back/domain/model/logger"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -52,24 +53,7 @@ func CreateUser(p CreateUserParam) (UserWithToken, error) {
 		p.GithubUsername = nil
 	}
 
-	// リポジトリに追加
-	// MySQLサーバーに接続
-	d, err := OpenMysql()
-	if err != nil {
-		return UserWithToken{}, err
-	}
-	// return時にMySQLサーバーとの接続を閉じる
-	defer d.Close()
-
-	// `users`テーブルに追加
 	id := uuid.New().String()
-	_, err = d.Exec(
-		`INSERT INTO users (id, name, email, password, post_event_availabled, manage, admin, twitter_id, github_username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		id, p.Name, p.Email, string(hashed), false, false, false, p.TwitterId, p.GithubUsername,
-	)
-	if err != nil {
-		return UserWithToken{}, err
-	}
 	u := User{
 		Id:                  id,
 		Name:                p.Name,
@@ -89,6 +73,28 @@ func CreateUser(p CreateUserParam) (UserWithToken, error) {
 	if err != nil {
 		return UserWithToken{}, err
 	}
+
+	go func() {
+		// リポジトリに追加
+		// MySQLサーバーに接続
+		d, err := OpenMysql()
+		if err != nil {
+			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+			return
+		}
+		// return時にMySQLサーバーとの接続を閉じる
+		defer d.Close()
+
+		// `users`テーブルに追加
+		_, err = d.Exec(
+			`INSERT INTO users (id, name, email, password, post_event_availabled, manage, admin, twitter_id, github_username) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			id, p.Name, p.Email, string(hashed), false, false, false, p.TwitterId, p.GithubUsername,
+		)
+		if err != nil {
+			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+			return
+		}
+	}()
 
 	return uwt, nil
 }

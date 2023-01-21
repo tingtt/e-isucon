@@ -51,5 +51,5 @@ log-dl:
 alp:
 	cat benchmark_ltsv.log | \
 		alp ltsv \
-			-m '/users/[0-9]+$$,/users/[0-9]+/star,/events/[0-9]+$$,/events/[0-9]+/documents$$,/events/[0-9]+/documents/[0-9]+' \
+			-m '/users/[0-9a-f\-]+$$,/users/[0-9a-f\-]+/star,/events/[0-9a-f\-]+$$,/events/[0-9a-f\-]+/documents$$,/events/[0-9a-f\-]+/documents/[0-9a-f\-]+' \
 			-r --sort avg

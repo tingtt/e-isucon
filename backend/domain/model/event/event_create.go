@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"prc_hub_back/domain/model/logger"
 	"prc_hub_back/domain/model/user"
 	"time"
 
@@ -82,52 +83,7 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 		})
 	}
 
-	// MySQLサーバーに接続
-	db, err := OpenMysql()
-	if err != nil {
-		return Event{}, err
-	}
-	// return時にMySQLサーバーとの接続を閉じる
-	defer db.Close()
-
-	// トランザクション開始
-	tx, err := db.BeginTxx(context.Background(), &sql.TxOptions{})
-	if err != nil {
-		return Event{}, err
-	}
-	defer func() {
-		// return時にトランザクションの後処理
-		//* 90行目の`defer`より先に実行される
-		if err != nil {
-			// 失敗時はロールバック
-			tx.Rollback()
-		} else {
-			// 成功時はコミット
-			tx.Commit()
-		}
-	}()
-
-	// `events`テーブルに追加
 	id := uuid.New().String()
-	_, err = tx.Exec(
-		`INSERT INTO events (id, name, description, location, published, completed, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		id, p.Name, p.Description, p.Location, p.Published, p.Completed, requestUser.Id,
-	)
-	if err != nil {
-		return Event{}, err
-	}
-
-	// `event_datetimes`テーブルに追加
-	for _, dt := range datetimes {
-		_, err = tx.Exec(
-			"INSERT INTO event_datetimes (event_id, start, end) VALUES (?, ?, ?)",
-			id, dt.Start, dt.End,
-		)
-		if err != nil {
-			return Event{}, err
-		}
-	}
-
 	e := Event{
 		Id:          id,
 		Name:        p.Name,
@@ -138,5 +94,57 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 		Completed:   p.Completed,
 		UserId:      requestUser.Id,
 	}
+
+	go func() {
+		// MySQLサーバーに接続
+		db, err := OpenMysql()
+		if err != nil {
+			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+			return
+		}
+		// return時にMySQLサーバーとの接続を閉じる
+		defer db.Close()
+
+		// トランザクション開始
+		tx, err := db.BeginTxx(context.Background(), &sql.TxOptions{})
+		if err != nil {
+			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+			return
+		}
+		defer func() {
+			// return時にトランザクションの後処理
+			//* 90行目の`defer`より先に実行される
+			if err != nil {
+				// 失敗時はロールバック
+				tx.Rollback()
+			} else {
+				// 成功時はコミット
+				tx.Commit()
+			}
+		}()
+
+		// `events`テーブルに追加
+		_, err = tx.Exec(
+			`INSERT INTO events (id, name, description, location, published, completed, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+			id, p.Name, p.Description, p.Location, p.Published, p.Completed, requestUser.Id,
+		)
+		if err != nil {
+			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+			return
+		}
+
+		// `event_datetimes`テーブルに追加
+		for _, dt := range datetimes {
+			_, err = tx.Exec(
+				"INSERT INTO event_datetimes (event_id, start, end) VALUES (?, ?, ?)",
+				id, dt.Start, dt.End,
+			)
+			if err != nil {
+				logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+				return
+			}
+		}
+	}()
+
 	return e, nil
 }
