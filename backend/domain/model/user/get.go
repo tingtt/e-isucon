@@ -54,12 +54,7 @@ func GetByEmail(email string) (User, error) {
 
 	// `users`テーブルから`id`が一致する行を取得し、変数`e`に代入する
 	r, err := db.Query(
-		`SELECT
-			id, name, email, password,
-			post_event_availabled, manage, admin,
-			twitter_id, github_username, star_count
-		FROM users
-		WHERE email = ?`,
+		`SELECT id, password, admin FROM users WHERE email = ?`,
 		email,
 	)
 	if err != nil {
@@ -74,13 +69,11 @@ func GetByEmail(email string) (User, error) {
 
 	// 変数に割り当て
 	u := User{}
-	err = r.Scan(
-		&u.Id, &u.Name, &u.Email, &u.Password, &u.PostEventAvailabled,
-		&u.Manage, &u.Admin, &u.TwitterId, &u.GithubUsername, &u.StarCount,
-	)
+	err = r.Scan(&u.Id, &u.Password, &u.Admin)
 	if err != nil {
 		return User{}, err
 	}
 
+	u.Email = email
 	return u, nil
 }
