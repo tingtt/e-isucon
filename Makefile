@@ -1,27 +1,27 @@
 .PHONY: ps
+SERVICE_NAME	?= eisucon-backend.service
 ps:
-	cd ./backend ; \
-		docker-compose ps
+	systemctl status $(SERVICE_NAME)
 
 .PHONY: build
 build:
 	cd ./backend ; \
-		docker-compose build
+		make build
 
 .PHONY: up
+SERVICE_NAME	?= eisucon-backend.service
 up:
-	cd ./backend ; \
-		docker-compose up -d
+	systemctl stop $(SERVICE_NAME)
 
 .PHONY: down
+SERVICE_NAME	?= eisucon-backend.service
 down:
-	cd ./backend ; \
-		docker-compose down
+	systemctl stop $(SERVICE_NAME)
 
 .PHONY: purge
 purge:
 	cd ./backend ; \
-		docker-compose down --volumes
+		make purge
 
 .PHONY: upgrade
 upgrade: purge build up
@@ -33,11 +33,11 @@ ssh:
 	@ssh -i ${SSH_FILE} ec2-user@${IP}
 
 .PYONY: log-save
+SERVICE_NAME	?= eisucon-backend.service
 log-save: /home/ec2-user/benchmark_logs
-	cd ./backend ; \
-		docker-compose logs backend | \
-			sed 's/backend-backend-1  | //g' | \
-			grep 'time:' \
+	journalctl -u $(SERVICE_NAME) --no-pager | \
+		cut -b 54- | \
+		grep 'time:' \
 			> /home/ec2-user/benchmark_logs/$$(date +%s).log
 
 .PYONY: log-dl
