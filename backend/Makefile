@@ -16,7 +16,7 @@ ARG_MYSQL_HOST	?= localhost
 ARG_MYSQL_DB	?= prc_hub
 ARG_MYSQL_USER	?= root
 ARG_MYSQL_PASSWORD	?= secret
-ARGS	?= --log.level=$(ARG_LOG_LEVEL) --jwt.issuer=prc_hub --jwt.secret=e0VzhtkQ --mysql.host=$(ARG_MYSQL_HOST) --mysql.db=$(ARG_MYSQL_DB) --mysql.user=$(ARG_MYSQL_USER) --mysql.password=$(ARG_MYSQL_PASSWORD) --migrate-sql-file="$(SEED_FELE)"
+ARGS	?= --log.level=$(ARG_LOG_LEVEL) --jwt.issuer=prc_hub --jwt.secret=e0VzhtkQ --mysql.host=$(ARG_MYSQL_HOST) --mysql.db=$(ARG_MYSQL_DB) --mysql.user=$(ARG_MYSQL_USER) --mysql.password=$(ARG_MYSQL_PASSWORD) --migrate-sql-file=$(SEED_FELE)
 define UNITFILE
 [Unit]
 Description=ECC-ISUCON backend
