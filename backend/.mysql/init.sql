@@ -17,7 +17,7 @@ USE `prc_hub`;
 --
 -- Table structure for table `users`
 --
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL UNIQUE,
@@ -34,7 +34,7 @@ CREATE TABLE `users` (
 --
 -- Table structure for table `events`
 --
-CREATE TABLE `events` (
+CREATE TABLE IF NOT EXISTS `events` (
   `id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` varchar(255),
@@ -48,7 +48,7 @@ CREATE TABLE `events` (
 --
 -- Table structure for table `event_datetimes`
 --
-CREATE TABLE `event_datetimes` (
+CREATE TABLE IF NOT EXISTS `event_datetimes` (
   `event_id` varchar(255) NOT NULL,
   `start` datetime NOT NULL,
   `end` datetime NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE `event_datetimes` (
 --
 -- Table structure for table `documents`
 --
-CREATE TABLE `documents` (
+CREATE TABLE IF NOT EXISTS `documents` (
   `id` varchar(255) NOT NULL,
   `event_id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
