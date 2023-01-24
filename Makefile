@@ -42,7 +42,8 @@ SERVICE_NAME	?= eisucon-backend.service
 log-save: /home/ec2-user/benchmark_logs
 	journalctl -u $(SERVICE_NAME) --no-pager | \
 		cut -b 54- | \
-		grep 'time:' \
+		grep 'time:' | \
+		sed 's/\s\s\s\s\s\s\s\s/\t/g' \
 			> /home/ec2-user/benchmark_logs/$$(date +%s).log
 
 .PYONY: log-dl
