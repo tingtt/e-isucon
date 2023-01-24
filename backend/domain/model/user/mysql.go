@@ -11,8 +11,8 @@ import (
 // Singleton field
 var dsn string
 
-func InitRepository(user string, password string, host string, port uint, db string) {
-	dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true", user, password, host, port, db)
+func InitRepository(user string, password string, db string) {
+	dsn = fmt.Sprintf("%s:%s@unix(/var/lib/mysql/mysql.sock)/%s?parseTime=true", user, password, db)
 }
 
 // MySQLサーバーに接続

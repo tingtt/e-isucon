@@ -11,8 +11,8 @@ import (
 // Singleton field
 var dsn string
 
-func Init(user string, password string, host string, port uint, db string) {
-	dsn = fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true&multiStatements=true", user, password, host, port, db)
+func Init(user string, password string, db string) {
+	dsn = fmt.Sprintf("%s:%s@unix(/var/lib/mysql/mysql.sock)/%s?parseTime=true&multiStatements=true", user, password, db)
 }
 
 // MySQLサーバーに接続

@@ -10,6 +10,6 @@ var (
 	ErrRepositoryNotInitialized = errors.New("repository not initialized")
 )
 
-func Init(u string, password string, host string, port uint, db string) {
-	user.InitRepository(u, password, host, port, db)
+func Init(u string, password string, db string) {
+	user.InitRepository(u, password, db)
 }

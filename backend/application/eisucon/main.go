@@ -8,8 +8,8 @@ import (
 // Singleton field
 var migrateSqlFile string
 
-func Init(user string, password string, host string, port uint, db string, migrateSqlFilePath string) {
-	eisucon.Init(user, password, host, port, db)
+func Init(user string, password string, db string, migrateSqlFilePath string) {
+	eisucon.Init(user, password, db)
 	migrateSqlFile = migrateSqlFilePath
 }
 

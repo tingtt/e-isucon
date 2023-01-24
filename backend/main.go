@@ -25,8 +25,6 @@ var (
 	issuer       = pflag.String("jwt.issuer", "", "jwt issuer")
 	secret       = pflag.String("jwt.secret", "", "jwt secret")
 
-	mysqlHost     = pflag.String("mysql.host", "localhost", "MySQL host")
-	mysqlPort     = pflag.Uint("mysql.port", 3306, "MySQL port")
 	mysqlDB       = pflag.String("mysql.db", "prc_hub", "MySQL db")
 	mysqlUser     = pflag.String("mysql.user", "prc_hub", "MySQL username")
 	mysqlPassword = pflag.String("mysql.password", "", "MySQL password")
@@ -66,9 +64,9 @@ func main() {
 	}
 
 	// Init application services
-	user.Init(*mysqlUser, *mysqlPassword, *mysqlHost, *mysqlPort, *mysqlDB)
-	event.Init(*mysqlUser, *mysqlPassword, *mysqlHost, *mysqlPort, *mysqlDB)
-	eisucon.Init(*mysqlUser, *mysqlPassword, *mysqlHost, *mysqlPort, *mysqlDB, *eisuconMigrationFile)
+	user.Init(*mysqlUser, *mysqlPassword, *mysqlDB)
+	event.Init(*mysqlUser, *mysqlPassword, *mysqlDB)
+	eisucon.Init(*mysqlUser, *mysqlPassword, *mysqlDB, *eisuconMigrationFile)
 
 	// Migrate seed data
 	err := eisucon.Migrate()
