@@ -7,5 +7,8 @@ import (
 )
 
 func Open() (*sqlx.DB, error) {
-	return sqlx.Open("mysql", "root:secret@unix(/var/lib/mysql/mysql.sock)/prc_hub?parseTime=true&multiStatements=true")
+	db, err := sqlx.Open("mysql", "root:secret@unix(/var/lib/mysql/mysql.sock)/prc_hub?parseTime=true&multiStatements=true")
+	db.SetMaxOpenConns(16)
+	db.SetMaxIdleConns(16)
+	return db, err
 }
