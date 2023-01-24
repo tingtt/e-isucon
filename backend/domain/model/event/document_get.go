@@ -15,7 +15,7 @@ func GetDocument(id string, requestUser user.User) (EventDocument, error) {
 
 	// `documents`テーブルから`id`が一致する行を取得し、変数`ed`に代入する
 	var ed EventDocument
-	r, err := db.Query("SELECT * FROM documents WHERE id = ?", id)
+	r, err := db.Query("SELECT id, event_id, name, url FROM documents WHERE id = ?", id)
 	if err != nil {
 		return EventDocument{}, err
 	}

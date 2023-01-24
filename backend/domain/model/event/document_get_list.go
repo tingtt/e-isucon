@@ -18,7 +18,7 @@ func GetDocumentList(q GetDocumentQueryParam) ([]EventDocument, error) {
 	defer db.Close()
 
 	// クエリを作成
-	query := "SELECT * FROM documents WHERE"
+	query := "SELECT id, event_id, name, url FROM documents WHERE"
 	queryParams := []interface{}{}
 	if q.EventId != nil {
 		// イベントIDで絞り込み
