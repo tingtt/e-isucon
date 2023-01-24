@@ -8,10 +8,15 @@ build:
 	cd ./backend ; \
 		make build
 
+.PHONY: install
+install:
+	cd ./backend ; \
+		make install
+
 .PHONY: up
 SERVICE_NAME	?= eisucon-backend.service
 up:
-	systemctl stop $(SERVICE_NAME)
+	systemctl start $(SERVICE_NAME)
 
 .PHONY: down
 SERVICE_NAME	?= eisucon-backend.service
