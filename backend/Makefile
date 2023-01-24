@@ -11,11 +11,9 @@ build:
 SEED_FELE	?= /usr/local/lib/eisucon-backend/seed.sql
 MODULE	?= prc_hub_back
 BIN	?= /usr/local/bin/eisucon-backend
-ARG_LOG_LEVEL	?= debug
-ARG_MYSQL_DB	?= prc_hub
 ARG_MYSQL_USER	?= root
 ARG_MYSQL_PASSWORD	?= secret
-ARGS	?= --log.level=$(ARG_LOG_LEVEL) --jwt.issuer=prc_hub --jwt.secret=e0VzhtkQ --mysql.db=$(ARG_MYSQL_DB) --mysql.user=$(ARG_MYSQL_USER) --mysql.password=$(ARG_MYSQL_PASSWORD) --migrate-sql-file=$(SEED_FELE)
+ARGS	?= --migrate-sql-file=$(SEED_FELE)
 define UNITFILE
 [Unit]
 Description=ECC-ISUCON backend

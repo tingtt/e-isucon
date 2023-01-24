@@ -1,11 +1,13 @@
 package eisucon
 
 import (
+	"prc_hub_back/domain/model/mysql"
+
 	"github.com/jmoiron/sqlx"
 )
 
 func Migrate(sqlFile string) error {
-	db, err := OpenMysql()
+	db, err := mysql.Open()
 	if err != nil {
 		return err
 	}

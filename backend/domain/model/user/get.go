@@ -1,8 +1,10 @@
 package user
 
+import "prc_hub_back/domain/model/mysql"
+
 func Get(id string) (User, error) {
 	// MySQLサーバーに接続
-	db, err := OpenMysql()
+	db, err := mysql.Open()
 	if err != nil {
 		return User{}, err
 	}
@@ -45,7 +47,7 @@ func Get(id string) (User, error) {
 
 func GetByEmail(email string) (User, error) {
 	// MySQLサーバーに接続
-	db, err := OpenMysql()
+	db, err := mysql.Open()
 	if err != nil {
 		return User{}, err
 	}

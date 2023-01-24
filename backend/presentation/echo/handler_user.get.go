@@ -1,12 +1,10 @@
 package echo
 
 import (
-	"fmt"
 	"net/http"
 	"prc_hub_back/application/user"
 	"prc_hub_back/domain/model/jwt"
 
-	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/labstack/echo/v4"
 )
 
@@ -20,11 +18,7 @@ func (*Server) GetUsersId(ctx echo.Context) error {
 	}
 
 	// Bind id
-	var id Id
-	err = runtime.BindStyledParameterWithLocation("simple", false, "id", runtime.ParamLocationPath, ctx.Param("id"), &id)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter id: %s", err))
-	}
+	id := ctx.Param("id")
 
 	// Get user
 	u, err := user.Get(id)

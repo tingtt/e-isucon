@@ -2,7 +2,8 @@ package event
 
 import (
 	"errors"
-	"prc_hub_back/domain/model/logger"
+	"fmt"
+	"prc_hub_back/domain/model/mysql"
 	"prc_hub_back/domain/model/user"
 
 	"github.com/google/uuid"
@@ -67,9 +68,9 @@ func CreateEventDocument(p CreateEventDocumentParam, requestUser user.User) (Eve
 
 	go func() {
 		// MySQLサーバーに接続
-		db, err := OpenMysql()
+		db, err := mysql.Open()
 		if err != nil {
-			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+			fmt.Printf("err: %v\n", err)
 			return
 		}
 		// return時にMySQLサーバーとの接続を閉じる
@@ -81,7 +82,7 @@ func CreateEventDocument(p CreateEventDocumentParam, requestUser user.User) (Eve
 			id, p.EventId, p.Name, p.Url,
 		)
 		if err != nil {
-			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+			fmt.Printf("err: %v\n", err)
 			return
 		}
 	}()

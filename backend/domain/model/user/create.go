@@ -1,8 +1,9 @@
 package user
 
 import (
+	"fmt"
 	"prc_hub_back/domain/model/jwt"
-	"prc_hub_back/domain/model/logger"
+	"prc_hub_back/domain/model/mysql"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -77,9 +78,9 @@ func CreateUser(p CreateUserParam) (UserWithToken, error) {
 	go func() {
 		// リポジトリに追加
 		// MySQLサーバーに接続
-		d, err := OpenMysql()
+		d, err := mysql.Open()
 		if err != nil {
-			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+			fmt.Printf("err: %v\n", err)
 			return
 		}
 		// return時にMySQLサーバーとの接続を閉じる
@@ -91,7 +92,7 @@ func CreateUser(p CreateUserParam) (UserWithToken, error) {
 			id, p.Name, p.Email, string(hashed), false, false, false, p.TwitterId, p.GithubUsername,
 		)
 		if err != nil {
-			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+			fmt.Printf("err: %v\n", err)
 			return
 		}
 	}()

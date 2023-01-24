@@ -1,6 +1,8 @@
 package user
 
 import (
+	"prc_hub_back/domain/model/mysql"
+
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -48,7 +50,7 @@ func SaveAdmin(email string, password string) error {
 
 		// リポジトリに追加
 		// MySQLサーバーに接続
-		d, err := OpenMysql()
+		d, err := mysql.Open()
 		if err != nil {
 			return err
 		}

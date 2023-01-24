@@ -1,6 +1,7 @@
 package user
 
 import (
+	"prc_hub_back/domain/model/mysql"
 	"strings"
 )
 
@@ -14,7 +15,7 @@ type GetUserListQueryParam struct {
 
 func GetList(q GetUserListQueryParam) ([]User, error) {
 	// MySQLサーバーに接続
-	db, err := OpenMysql()
+	db, err := mysql.Open()
 	if err != nil {
 		return nil, err
 	}

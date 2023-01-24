@@ -4,7 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"prc_hub_back/domain/model/logger"
+	"fmt"
+	"prc_hub_back/domain/model/mysql"
 	"prc_hub_back/domain/model/user"
 	"time"
 
@@ -97,9 +98,8 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 
 	go func() {
 		// MySQLサーバーに接続
-		db, err := OpenMysql()
+		db, err := mysql.Open()
 		if err != nil {
-			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
 			return
 		}
 		// return時にMySQLサーバーとの接続を閉じる
@@ -108,7 +108,6 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 		// トランザクション開始
 		tx, err := db.BeginTxx(context.Background(), &sql.TxOptions{})
 		if err != nil {
-			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
 			return
 		}
 		defer func() {
@@ -129,7 +128,7 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 			id, p.Name, p.Description, p.Location, p.Published, p.Completed, requestUser.Id,
 		)
 		if err != nil {
-			logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+			fmt.Printf("err: %v\n", err)
 			return
 		}
 
@@ -140,7 +139,7 @@ func CreateEvent(p CreateEventParam, requestUser user.User) (Event, error) {
 				id, dt.Start, dt.End,
 			)
 			if err != nil {
-				logger.Logger().Fatalf("Failed:\n\terr: %v", err)
+				fmt.Printf("err: %v\n", err)
 				return
 			}
 		}

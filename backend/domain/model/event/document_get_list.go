@@ -1,6 +1,9 @@
 package event
 
-import "strings"
+import (
+	"prc_hub_back/domain/model/mysql"
+	"strings"
+)
 
 type GetDocumentQueryParam struct {
 	EventId     *string `query:"event_id"`
@@ -10,7 +13,7 @@ type GetDocumentQueryParam struct {
 
 func GetDocumentList(q GetDocumentQueryParam) ([]EventDocument, error) {
 	// MySQLサーバーに接続
-	db, err := OpenMysql()
+	db, err := mysql.Open()
 	if err != nil {
 		return nil, err
 	}

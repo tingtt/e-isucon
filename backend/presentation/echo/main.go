@@ -1,41 +1,42 @@
 package echo
 
 import (
-	"fmt"
 	"os"
 	"prc_hub_back/domain/model/jwt"
-	"prc_hub_back/domain/model/logger"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func Start(port uint, jwtIssuer string, jwtSecret string, allowOrigins []string) {
+const (
+	jwtIssuer = "prc_hub"
+	jwtSecret = "secret"
+)
+
+func Start(logLTSV bool) {
 	// echoサーバーのインスタンス生成
 	e := echo.New()
 
 	// LSTV形式のロギング
 	e.HideBanner = true
 	e.HidePort = true
-	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "time:${time_rfc3339}\thost:${remote_ip}\tstatus:${status}\tmethod:${method}\turi:${uri}\tsize:${bytes_out}\tua:${user_agent}\tapptime:${latency}\tvhost:${host}\treqtime_human:${latency_human}\thost:${host}\n",
-		Output: os.Stdout,
-	}))
-
-	// CORS
-	if allowOrigins != nil {
-		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-			AllowOrigins: allowOrigins,
-			AllowHeaders: []string{
-				echo.HeaderOrigin,
-				echo.HeaderContentType,
-				echo.HeaderAccept,
-				echo.HeaderAuthorization,
-			},
+	if logLTSV {
+		e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+			Format: "time:${time_rfc3339}\thost:${remote_ip}\tstatus:${status}\tmethod:${method}\turi:${uri}\tsize:${bytes_out}\tua:${user_agent}\tapptime:${latency}\tvhost:${host}\treqtime_human:${latency_human}\thost:${host}\n",
+			Output: os.Stdout,
 		}))
-		logger.Logger().Info("cors enabled")
-		logger.Logger().Debugf("cors allow origins: %v", allowOrigins)
+
 	}
+	// CORS
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{
+			echo.HeaderOrigin,
+			echo.HeaderContentType,
+			echo.HeaderAccept,
+			echo.HeaderAuthorization,
+		},
+	}))
 
 	// JWT
 	jwt.InitWithSkipper(
@@ -83,5 +84,5 @@ func Start(port uint, jwtIssuer string, jwtSecret string, allowOrigins []string)
 	e.PATCH("/users/:id", server.PatchUsersId)
 
 	// echoサーバーの起動
-	logger.Logger().Fatal(e.Start(fmt.Sprintf(":%d", port)))
+	e.Logger.Fatal(e.Start(":1323"))
 }

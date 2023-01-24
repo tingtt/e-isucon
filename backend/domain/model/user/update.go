@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 	"prc_hub_back/domain/model/jwt"
+	"prc_hub_back/domain/model/mysql"
 	"prc_hub_back/domain/model/util"
 	"strings"
 
@@ -90,7 +91,7 @@ func Update(id string, p UpdateUserParam, requestUser User) (UserWithToken, erro
 
 	// リポジトリ内の`User`を更新
 	// MySQLサーバーに接続
-	d, err := OpenMysql()
+	d, err := mysql.Open()
 	if err != nil {
 		return UserWithToken{}, err
 	}

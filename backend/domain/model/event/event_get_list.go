@@ -3,6 +3,7 @@ package event
 import (
 	"errors"
 	"fmt"
+	"prc_hub_back/domain/model/mysql"
 	"prc_hub_back/domain/model/user"
 	"strings"
 	"time"
@@ -19,7 +20,7 @@ type GetEventListQueryParam struct {
 
 func GetEventList(q GetEventListQueryParam, requestUser user.User) ([]EventEmbed, error) {
 	// MySQLサーバーに接続
-	d, err := OpenMysql()
+	d, err := mysql.Open()
 	if err != nil {
 		return nil, err
 	}

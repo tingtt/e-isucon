@@ -2,6 +2,7 @@ package event
 
 import (
 	"errors"
+	"prc_hub_back/domain/model/mysql"
 	"prc_hub_back/domain/model/user"
 	"time"
 )
@@ -41,7 +42,7 @@ func validateUrl(url string) error {
 
 func validateEventId(id string, requestUser user.User) error {
 	// MySQLサーバーに接続
-	db, err := OpenMysql()
+	db, err := mysql.Open()
 	if err != nil {
 		return err
 	}

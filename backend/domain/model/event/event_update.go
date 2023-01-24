@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"prc_hub_back/domain/model/mysql"
 	"prc_hub_back/domain/model/user"
 	"prc_hub_back/domain/model/util"
 	"strings"
@@ -80,7 +81,7 @@ func UpdateEvent(id string, p UpdateEventParam, requestUser user.User) (Event, e
 	}
 
 	// MySQLサーバーに接続
-	db, err := OpenMysql()
+	db, err := mysql.Open()
 	if err != nil {
 		return Event{}, err
 	}

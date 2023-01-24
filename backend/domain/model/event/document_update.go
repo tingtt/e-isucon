@@ -2,6 +2,7 @@ package event
 
 import (
 	"errors"
+	"prc_hub_back/domain/model/mysql"
 	"prc_hub_back/domain/model/user"
 	"strings"
 )
@@ -75,7 +76,7 @@ func UpdateEventDocument(id string, p UpdateEventDocumentParam, requestUser user
 	}
 
 	// MySQLサーバーに接続
-	db, err := OpenMysql()
+	db, err := mysql.Open()
 	if err != nil {
 		return EventDocument{}, err
 	}

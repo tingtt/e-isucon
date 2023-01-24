@@ -1,5 +1,7 @@
 package user
 
+import "prc_hub_back/domain/model/mysql"
+
 func AddStar(UserId string) (count uint64, err error) {
 	_, err = Get(UserId)
 	if err != nil {
@@ -7,7 +9,7 @@ func AddStar(UserId string) (count uint64, err error) {
 	}
 
 	// MySQLサーバーに接続
-	db, err := OpenMysql()
+	db, err := mysql.Open()
 	if err != nil {
 		return 0, err
 	}

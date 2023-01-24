@@ -1,6 +1,7 @@
 package event
 
 import (
+	"prc_hub_back/domain/model/mysql"
 	"prc_hub_back/domain/model/user"
 	"time"
 )
@@ -12,7 +13,7 @@ type GetEventQueryParam struct {
 func GetEvent(id string, q GetEventQueryParam, requestUser user.User) (EventEmbed, error) {
 	// Get event
 	// MySQLサーバーに接続
-	d, err := OpenMysql()
+	d, err := mysql.Open()
 	if err != nil {
 		return EventEmbed{}, err
 	}

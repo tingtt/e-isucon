@@ -1,6 +1,9 @@
 package user
 
-import "errors"
+import (
+	"errors"
+	"prc_hub_back/domain/model/mysql"
+)
 
 // Errors
 var (
@@ -26,7 +29,7 @@ func DeleteUesr(id string, requestUser User) error {
 
 	// リポジトリから`User`を削除
 	// MySQLサーバーに接続
-	d, err := OpenMysql()
+	d, err := mysql.Open()
 	if err != nil {
 		return err
 	}

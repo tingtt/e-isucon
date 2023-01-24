@@ -1,12 +1,15 @@
 package event
 
-import "prc_hub_back/domain/model/user"
+import (
+	"prc_hub_back/domain/model/mysql"
+	"prc_hub_back/domain/model/user"
+)
 
 func GetDocument(id string, requestUser user.User) (EventDocument, error) {
 	// Get document
 
 	// MySQLサーバーに接続
-	db, err := OpenMysql()
+	db, err := mysql.Open()
 	if err != nil {
 		return EventDocument{}, err
 	}

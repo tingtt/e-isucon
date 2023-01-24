@@ -2,6 +2,7 @@ package event
 
 import (
 	"errors"
+	"prc_hub_back/domain/model/mysql"
 	"prc_hub_back/domain/model/user"
 )
 
@@ -31,7 +32,7 @@ func DeleteEventDocument(id string, requestUser user.User) error {
 	}
 
 	// MySQLサーバーに接続
-	db, err := OpenMysql()
+	db, err := mysql.Open()
 	if err != nil {
 		return err
 	}
