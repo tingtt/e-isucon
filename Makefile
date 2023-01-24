@@ -39,7 +39,7 @@ ssh:
 
 .PYONY: log-save
 SERVICE_NAME	?= eisucon-backend.service
-TIMESTAMP	?= $(shell journalctl -o short-iso -u eisucon-backend.service --no-pager | grep 'time:' | grep /reset | head -n1 | awk '{print $1}' | sed 's/T/ /g; s/+0900//g')
+TIMESTAMP	?= $(shell journalctl -o short-iso -u eisucon-backend.service --no-pager | grep 'time:' | grep /reset | tail -n1 | awk '{print $$1}' | sed 's/T/ /g; s/+0900//g')
 log-save: /home/ec2-user/benchmark_logs
 	journalctl -u $(SERVICE_NAME) --no-pager -o cat --since "$(TIMESTAMP)" | \
 		grep 'time:' | \
